@@ -9,10 +9,11 @@ RUN apt-get update && \
 
 RUN mkdir -p /source /build
 RUN git clone https://github.com/gluster/glusterfs.git /source
+RUN cd /source && git checkout 'v7.1'
 
 WORKDIR /source
 RUN ./autogen.sh
-RUN ./configure --disable-fuse-client --disable-syslog --prefix=/
+RUN ./configure --disable-fuse-client --disable-syslog --prefix=""
 RUN make -j$(nproc)
 
 ENV DESTDIR="/build"
@@ -25,7 +26,7 @@ FROM bitnami/minideb:buster
 COPY --from=0 /build .
 
 RUN apt-get update; \
-    apt-get -y install libtirpc3 libreadline7 libxml2 liburcu6 python3; \
+    apt-get -y install libtirpc3 libreadline7 libxml2 liburcu6 libibverbs1 librdmacm1 python3; \
     apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
     rm -rf /var/lib/apt/lists/*
 
