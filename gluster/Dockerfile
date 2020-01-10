@@ -29,7 +29,8 @@ RUN apt-get update; \
     apt-get -y install libtirpc3 libreadline7 libxml2 \
     procps liburcu6 libibverbs1 librdmacm1 python3; \
     apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/*; \
+    ln -s /bin/true /sbin/systemctl
 
 EXPOSE 111 24007 24008 38465-38467 49152-60999
 
