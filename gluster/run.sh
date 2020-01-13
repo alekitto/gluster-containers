@@ -9,7 +9,18 @@ if [ -c "${HOST_DEV_DIR}/zero" ] && [ -c "${HOST_DEV_DIR}/null" ]; then
     mount --rbind "${HOST_DEV_DIR}" /dev
 fi
 
-/sbin/glustereventsd &
-/sbin/glusterd -N --log-file=- --log-level=$LOG_LEVEL $GLUSTERD_OPTIONS &
+/lib/systemd/systemd-udevd & UDEVD_PID=$!
+/sbin/glustereventsd & EVENTS_PID=$!
+/sbin/glusterd -N --log-file=- --log-level=$LOG_LEVEL $GLUSTERD_OPTIONS & GLUSTERD_PID=$!
 
-wait
+(while true; do
+  if ( pgrep systemd-udevd && pgrep glustereventsd && pgrep glusterd ) > /dev/null; then
+    sleep 5
+  else
+    break
+  fi
+done)
+
+kill $UDEVD_PID /dev/null 2>&1 ; kill $EVENTS_PID /dev/null 2>&1 ; kill $GLUSTERD_PID /dev/null 2>&1 ;
+sleep 10
+kill -9 $UDEVD_PID /dev/null 2>&1 ; kill -9 $EVENTS_PID /dev/null 2>&1 ; kill $GLUSTERD_PID /dev/null 2>&1 ;
