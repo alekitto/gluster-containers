@@ -9,6 +9,20 @@ if [ -c "${HOST_DEV_DIR}/zero" ] && [ -c "${HOST_DEV_DIR}/null" ]; then
     mount --rbind "${HOST_DEV_DIR}" /dev
 fi
 
+HEKETI_CUSTOM_FSTAB=${HEKETI_CUSTOM_FSTAB:-/var/lib/heketi/fstab}
+if [ -f $HEKETI_CUSTOM_FSTAB ]; then
+      pvscan
+      vgscan
+      lvscan
+      vgchange -ay
+
+      mount -a --fstab $HEKETI_CUSTOM_FSTAB
+      sts=$?
+      if [ $sts -eq 0 ]; then
+            echo "Mount command Successful"
+      fi
+fi
+
 /lib/systemd/systemd-udevd & UDEVD_PID=$!
 /sbin/glustereventsd & EVENTS_PID=$!
 /sbin/glusterd -N --log-file=- --log-level=$LOG_LEVEL $GLUSTERD_OPTIONS & GLUSTERD_PID=$!
