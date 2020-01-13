@@ -27,7 +27,7 @@ COPY --from=0 /build .
 
 RUN apt-get update; \
     apt-get -y install libtirpc3 libreadline7 libxml2 kmod \
-    procps liburcu6 libibverbs1 librdmacm1 \
+    procps liburcu6 libibverbs1 librdmacm1 xfsprogs \
     thin-provisioning-tools python3 udev lvm2; \
     apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
     rm -rf /var/lib/apt/lists/*; \
