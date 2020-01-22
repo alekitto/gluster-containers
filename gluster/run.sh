@@ -14,6 +14,11 @@ if [ -f $HEKETI_CUSTOM_FSTAB ]; then
       pvscan
       vgscan
       lvscan
+      vgchange -an
+
+      pvscan
+      vgscan
+      lvscan
       vgchange -ay
 
       mount -a --fstab $HEKETI_CUSTOM_FSTAB
