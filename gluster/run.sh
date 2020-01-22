@@ -35,7 +35,7 @@ fi
 /sbin/gluster-exporter & EXPORTER_PID=$!
 
 (while true; do
-  if ( pgrep systemd-udevd && pgrep glustereventsd && pgrep glusterd && pgrep gluster-exporter ) > /dev/null; then
+  if ( pgrep systemd-udevd && pgrep glustereventsd && pgrep glusterd ) > /dev/null; then
     sleep 5
   else
     break
