@@ -9,7 +9,7 @@ RUN apt-get update && \
 
 RUN mkdir -p /source /build
 RUN git clone https://github.com/gluster/glusterfs.git /source
-RUN cd /source && git checkout 'v7.1'
+RUN cd /source && git checkout 'v7.2'
 
 WORKDIR /source
 RUN ./autogen.sh
