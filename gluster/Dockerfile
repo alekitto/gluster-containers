@@ -52,6 +52,7 @@ RUN apt-get update; \
     thin-provisioning-tools python3 udev lvm2; \
     apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
     rm -rf /var/lib/apt/lists/*; \
+    ln -sv /sbin/lvm /usr/sbin/lvm; \
     ln -s /bin/true /sbin/systemctl
 
 EXPOSE 111 24007 24008 24100 38465-38467 49152-60999
