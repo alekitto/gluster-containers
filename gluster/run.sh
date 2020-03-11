@@ -27,6 +27,11 @@ if [ -f $HEKETI_CUSTOM_FSTAB ]; then
       sts=$?
       if [ $sts -eq 0 ]; then
             echo "Mount command Successful"
+
+            mount --bind $HEKETI_CUSTOM_FSTAB /etc/fstab
+
+            touch $HEKETI_CUSTOM_FSTAB.save
+            mount --bind $HEKETI_CUSTOM_FSTAB.save /etc/fstab.save
       fi
 fi
 
