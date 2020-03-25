@@ -57,4 +57,10 @@ RUN apt-get update; \
 
 EXPOSE 111 24007 24008 24100 38465-38467 49152-60999
 
+# Add Tini
+ENV TINI_VERSION v0.18.0
+ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
+RUN chmod +x /tini
+ENTRYPOINT ["/tini", "--"]
+
 CMD ["/run.sh"]
