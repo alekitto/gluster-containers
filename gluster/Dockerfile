@@ -50,8 +50,6 @@ ADD https://github.com/just-containers/s6-overlay/releases/download/v1.21.8.0/s6
 RUN gunzip -c /tmp/s6-overlay-amd64.tar.gz | tar -xf - -C /
 
 COPY --from=0 /build .
-COPY services.d/* /etc/services.d/
-COPY cont-init.d/* /etc/cont-init.d/
 
 RUN apt-get update; \
     apt-get -y install libtirpc3 libreadline7 libxml2 kmod \
@@ -65,6 +63,9 @@ RUN apt-get update; \
 EXPOSE 111 24007 24008 24100 38465-38467 49152-60999
 
 ENV GLUSTERD_OPTIONS="" LOG_LEVEL="DEBUG"
+
+ADD services.d /etc/services.d
+ADD cont-init.d /etc/cont-init.d
 
 ENTRYPOINT ["/init"]
 CMD ["sh", "-c", "/sbin/glusterd -N --log-file=- --log-level=$LOG_LEVEL $GLUSTERD_OPTIONS"]

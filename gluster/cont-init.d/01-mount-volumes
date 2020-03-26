@@ -36,3 +36,6 @@ if [ -f $HEKETI_CUSTOM_FSTAB ]; then
             mount --bind $HEKETI_CUSTOM_FSTAB.save /etc/fstab.save
       fi
 fi
+
+kill SIGINT $UDEVD_PID
+wait $UDEVD_PID
