@@ -5,13 +5,15 @@ RUN apt-get update && \
         pkg-config libssl-dev libxml2-dev python-dev libaio-dev       \
         libibverbs-dev librdmacm-dev libreadline-dev liblvm2-dev      \
         libglib2.0-dev liburcu-dev libcmocka-dev libsqlite3-dev       \
-        libacl1-dev git-core libtirpc-dev curl wget go-dep rsync
+        libacl1-dev git-core libtirpc-dev curl wget go-dep libnfs-dev \
+        rsync
 
 RUN mkdir -p /source /build
 RUN git clone https://github.com/gluster/glusterfs.git /source
 RUN cd /source && git checkout 'v7.4'
 
 WORKDIR /source
+RUN sed -i -E 's/AM_INIT_AUTOMAKE\(\[(.+)\]\)/AM_INIT_AUTOMAKE([\1 subdir-objects])/' ./configure.ac
 RUN ./autogen.sh
 RUN ./configure --disable-fuse-client --disable-syslog --prefix=""
 RUN make -j$(nproc)
@@ -40,15 +42,20 @@ RUN export PATH=$GOPATH/bin:$GOROOT/bin:$PATH ; \
     rsync -vr /exporter/ /build/
 
 COPY exporter.toml /build/etc/gluster-exporter/gluster-exporter.toml
-COPY run.sh /build
+#COPY run.sh /build
 
 FROM bitnami/minideb:buster
 
+ADD https://github.com/just-containers/s6-overlay/releases/download/v1.21.8.0/s6-overlay-amd64.tar.gz /tmp/
+RUN gunzip -c /tmp/s6-overlay-amd64.tar.gz | tar -xf - -C /
+
 COPY --from=0 /build .
+COPY services.d/* /etc/services.d/
+COPY cont-init.d/* /etc/cont-init.d/
 
 RUN apt-get update; \
     apt-get -y install libtirpc3 libreadline7 libxml2 kmod \
-    procps liburcu6 libibverbs1 librdmacm1 xfsprogs \
+    procps liburcu6 libibverbs1 librdmacm1 xfsprogs libnfs12 \
     thin-provisioning-tools python3 udev lvm2; \
     apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
     rm -rf /var/lib/apt/lists/*; \
@@ -57,10 +64,7 @@ RUN apt-get update; \
 
 EXPOSE 111 24007 24008 24100 38465-38467 49152-60999
 
-# Add Tini
-ENV TINI_VERSION v0.18.0
-ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini /tini
-RUN chmod +x /tini
-ENTRYPOINT ["/tini", "--"]
+ENV GLUSTERD_OPTIONS="" LOG_LEVEL="DEBUG"
 
-CMD ["/run.sh"]
+ENTRYPOINT ["/init"]
+CMD ["sh", "-c", "/sbin/glusterd -N --log-file=- --log-level=$LOG_LEVEL $GLUSTERD_OPTIONS"]

@@ -36,34 +36,3 @@ if [ -f $HEKETI_CUSTOM_FSTAB ]; then
             mount --bind $HEKETI_CUSTOM_FSTAB.save /etc/fstab.save
       fi
 fi
-
-/sbin/glustereventsd & EVENTS_PID=$!
-/sbin/glusterd -N --log-file=- --log-level=$LOG_LEVEL $GLUSTERD_OPTIONS & GLUSTERD_PID=$!
-/sbin/gluster-exporter & EXPORTER_PID=$!
-
-fn_exit() {
-  kill SIGINT $GLUSTERD_PID
-  kill SIGINT $EVENTS_PID
-  kill SIGINT $EXPORTER_PID
-}
-
-setup_signals() {
-  handler="$1"; shift
-  for sig; do
-    trap "$handler '$sig'" "$sig"
-  done
-}
-
-setup_signals "fn_exit" SIGINT SIGTERM SIGHUP
-
-(while true; do
-  if ( pgrep systemd-udevd && pgrep glustereventsd && pgrep glusterd ) > /dev/null; then
-    sleep 5
-  else
-    break
-  fi
-done)
-
-kill $UDEVD_PID /dev/null 2>&1 ; kill $EVENTS_PID /dev/null 2>&1 ; kill $GLUSTERD_PID /dev/null 2>&1 ; kill $EXPORTER_PID /dev/null 2>&1 ;
-sleep 10
-kill -9 $UDEVD_PID /dev/null 2>&1 ; kill -9 $EVENTS_PID /dev/null 2>&1 ; kill -9 $GLUSTERD_PID /dev/null 2>&1 ; kill -9 $EXPORTER_PID /dev/null 2>&1 ;
