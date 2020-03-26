@@ -62,7 +62,7 @@ RUN apt-get update; \
 
 EXPOSE 111 24007 24008 24100 38465-38467 49152-60999
 
-ENV GLUSTERD_OPTIONS="" LOG_LEVEL="DEBUG"
+ENV GLUSTERD_OPTIONS="" LOG_LEVEL="INFO"
 
 ADD services.d /etc/services.d
 ADD cont-init.d /etc/cont-init.d
