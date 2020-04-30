@@ -10,7 +10,7 @@ RUN apt-get update && \
 
 RUN mkdir -p /source /build
 RUN git clone https://github.com/gluster/glusterfs.git /source
-RUN cd /source && git checkout 'v7.4'
+RUN cd /source && git checkout 'v7.5'
 
 WORKDIR /source
 RUN sed -i -E 's/AM_INIT_AUTOMAKE\(\[(.+)\]\)/AM_INIT_AUTOMAKE([\1 subdir-objects])/' ./configure.ac
