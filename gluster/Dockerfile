@@ -10,7 +10,7 @@ RUN apt-get update && \
 
 RUN mkdir -p /source /build
 RUN git clone https://github.com/gluster/glusterfs.git /source
-RUN cd /source && git checkout 'v7.5'
+RUN cd /source && git checkout 'v7.6'
 
 WORKDIR /source
 RUN sed -i -E 's/AM_INIT_AUTOMAKE\(\[(.+)\]\)/AM_INIT_AUTOMAKE([\1 subdir-objects])/' ./configure.ac
@@ -46,7 +46,7 @@ COPY exporter.toml /build/etc/gluster-exporter/gluster-exporter.toml
 
 FROM bitnami/minideb:buster
 
-ADD https://github.com/just-containers/s6-overlay/releases/download/v1.21.8.0/s6-overlay-amd64.tar.gz /tmp/
+ADD https://github.com/just-containers/s6-overlay/releases/download/v2.0.0.1/s6-overlay-amd64.tar.gz /tmp/
 RUN gunzip -c /tmp/s6-overlay-amd64.tar.gz | tar -xf - -C /
 
 COPY --from=0 /build .
