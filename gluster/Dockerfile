@@ -51,9 +51,9 @@ RUN gunzip -c /tmp/s6-overlay-amd64.tar.gz | tar -xf - -C /
 
 COPY --from=0 /build .
 
-RUN apt-get update; \
-    apt-get -y install libtirpc3 libreadline7 libxml2 kmod \
-    procps liburcu6 libibverbs1 librdmacm1 xfsprogs libnfs12 \
+RUN echo "deb http://deb.debian.org/debian unstable main" >> /etc/apt/sources.list; \
+    install_packages libtirpc3 libreadline7 libxml2 kmod \
+    procps liburcu6 libibverbs1 librdmacm1 xfsprogs/unstable libnfs12 \
     thin-provisioning-tools python3 udev lvm2; \
     apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
     rm -rf /var/lib/apt/lists/*; \
