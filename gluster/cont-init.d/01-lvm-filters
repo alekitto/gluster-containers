@@ -1,6 +1,8 @@
-#!/bin/bash
+#!/usr/bin/with-contenv bash
 
 set -eux
+
+LVM_FILTER=${LVM_FILTER:-}
 
 if [[ "" != "$LVM_FILTER" ]]; then
     sed -i "s/# filter = \[ \"a|\.\*|\" \]/filter = [ "$LVM_FILTER" ]/" /etc/lvm/lvm.conf
