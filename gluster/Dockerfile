@@ -54,7 +54,7 @@ COPY --from=0 /build .
 RUN echo "deb http://deb.debian.org/debian unstable main" >> /etc/apt/sources.list; \
     install_packages libtirpc3 libreadline7 libxml2 kmod \
     procps liburcu6 libibverbs1 librdmacm1 xfsprogs/unstable libnfs12 \
-    thin-provisioning-tools python3 udev lvm2; \
+    thin-provisioning-tools python3 udev lvm2 e2fsprogs; \
     apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
     rm -rf /var/lib/apt/lists/*; \
     ln -sv /sbin/lvm /usr/sbin/lvm; \
